@@ -25,7 +25,7 @@ products.forEach((product)=>{
     </div>
 
     <div class="product-quantity-container">
-      <select>
+      <select class="js-select-${product.id}">
         <option selected value="1">1</option>
         <option value="2">2</option>
         <option value="3">3</option>
@@ -41,12 +41,12 @@ products.forEach((product)=>{
 
     <div class="product-spacer"></div>
 
-    <div class="added-to-cart">
+    <div class="added-to-cart js-added-to-cart-${product.id}">
       <img src="images/icons/checkmark.png">
       Added
     </div>
 
-    <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id="${product.id}">
+    <button class="add-to-cart-button button-primary js-add-to-cart" data-product-id=${product.id}>
       Add to Cart
     </button>
   </div>`;
@@ -57,7 +57,8 @@ document.querySelector('.js-products-grid').innerHTML = productsHTML;
 
 document.querySelectorAll('.js-add-to-cart').forEach((button)=>{
   button.addEventListener('click', () => {
-    const productId = button.dataset.productId;  
+    const productId = button.dataset.productId; 
+    const selectQuantity = document.querySelector(`.js-select-${productId}`).value;
     let matchingProduct;
     cart.forEach((item)=>{
       if (productId === item.productId){
@@ -65,23 +66,29 @@ document.querySelectorAll('.js-add-to-cart').forEach((button)=>{
       }
     });
     if (matchingProduct){
-      matchingProduct.quantity+=1;
+      matchingProduct.quantity+=Number(selectQuantity);
     }else{
     cart.push({
       productId: productId,
-      quantity: 1
-    })};
-
+      quantity: Number(selectQuantity)
+    })
+  }
     let cartQuantity = 0;
     cart.forEach((item)=>{
       cartQuantity += item.quantity;
     });
 
     document.querySelector('.js-cart-quantity').innerHTML = cartQuantity
-    console.log(cartQuantity)
-    console.log(cart)
+    
+    const addedDivDisplay = document.querySelector(`.js-added-to-cart-${productId}`)
+    addedDivDisplay.classList.add('visible');
+    setTimeout(()=>{
+      addedDivDisplay.classList.remove('visible');
+    }, 1500);
   })
 })
+
+
 
 
 
