@@ -1,8 +1,13 @@
-import { cart, removeFromCart, setCartLocalStorage, getCartLocalStorage} from "../data/cart.js";
+import { cart, removeFromCart, setCartLocalStorage, getCartLocalStorage, calculateCartQuantity} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
 getCartLocalStorage();
+updateCheckoutQuantity();
+function updateCheckoutQuantity(){
+  let cartQuantity = calculateCartQuantity();
+  document.querySelector('.js-checkout-quantity').innerHTML = `${cartQuantity} items`;
+}
 
 let checkoutItemsHTML = '';
 cart.forEach((cartItem) => {
@@ -103,5 +108,6 @@ document.querySelectorAll('.js-delete-button').forEach((button)=>{
     const containerToRemove = document.querySelector(`.js-cart-item-container-${productId}`)
     containerToRemove.remove();
     setCartLocalStorage();
+    updateCheckoutQuantity();
   })
 })

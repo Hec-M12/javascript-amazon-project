@@ -1,5 +1,4 @@
 export let cart = [];
-
   getCartLocalStorage();
 export function getCartLocalStorage(){
   if (!localStorage.getItem('cart')){
@@ -41,3 +40,10 @@ export function setCartLocalStorage(){
   localStorage.setItem('cart',JSON.stringify(cart))
 }
 
+export function calculateCartQuantity(){
+  let cartQuantity = 0;
+  cart.forEach((cartItem)=>{
+    cartQuantity += cartItem.quantity;
+  });
+  return cartQuantity;
+}

@@ -1,4 +1,4 @@
-import { cart, addToCart, setCartLocalStorage, getCartLocalStorage } from "../data/cart.js";
+import { cart, addToCart, setCartLocalStorage, getCartLocalStorage, calculateCartQuantity} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
@@ -8,12 +8,8 @@ getCartLocalStorage();
 let productsHTML = "";
 
 function updateCartQuantity(){
-  let cartQuantity = 0;
-    cart.forEach((cartItem)=>{
-      cartQuantity += cartItem.quantity;
-    });
-
-  document.querySelector('.js-cart-quantity').innerHTML = cartQuantity
+  let cartQuantity = calculateCartQuantity();
+  document.querySelector('.js-cart-quantity').innerHTML = cartQuantity;
 }
 
 function displayAddedDiv(productId){
