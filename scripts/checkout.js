@@ -1,7 +1,8 @@
-import { cart, removeFromCart } from "../data/cart.js";
+import { cart, removeFromCart, setCartLocalStorage, getCartLocalStorage} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
+getCartLocalStorage();
 
 let checkoutItemsHTML = '';
 cart.forEach((cartItem) => {
@@ -13,6 +14,7 @@ cart.forEach((cartItem) => {
       matchingProduct = product;
     }
   })
+
   checkoutItemsHTML += `
   <div class="cart-item-container 
     js-cart-item-container-${matchingProduct.id}">
@@ -97,10 +99,9 @@ document.querySelector('.js-order-summary').innerHTML = checkoutItemsHTML;
 document.querySelectorAll('.js-delete-button').forEach((button)=>{
   button.addEventListener('click', ()=>{
     const productId = button.dataset.productId;
-    console.log(productId)
     removeFromCart(productId);
-    console.log(cart);
     const containerToRemove = document.querySelector(`.js-cart-item-container-${productId}`)
     containerToRemove.remove();
+    setCartLocalStorage();
   })
 })
