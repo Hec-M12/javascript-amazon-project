@@ -2,8 +2,12 @@ import { cart, removeFromCart, setCartLocalStorage, getCartLocalStorage, calcula
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
+
+
 getCartLocalStorage();
 updateCheckoutQuantity();
+
+
 function updateCheckoutQuantity(){
   let cartQuantity = calculateCartQuantity();
   document.querySelector('.js-checkout-quantity').innerHTML = `${cartQuantity} items`;
@@ -40,11 +44,12 @@ cart.forEach((cartItem) => {
       </div>
       <div class="product-quantity">
         <span>
-          Quantity: <span class="quantity-label">${cartItem.quantity}</span>
+          Quantity: <span class="quantity-label js-quantity-${matchingProduct.id}">${cartItem.quantity}</span>
         </span>
-        <span class="update-quantity-link link-primary">
+        <span data-product-id=${matchingProduct.id} class="update-quantity-link link-primary js-update-button js-update-button-${matchingProduct.id}">
           Update
         </span>
+        <input data-product-id=${matchingProduct.id} type="number" class="update-quantity-input js-update-input-${matchingProduct.id}" min="1" value="${cartItem.quantity}">
         <span data-product-id='${matchingProduct.id}' class="delete-quantity-link link-primary js-delete-button">
           Delete
         </span>
@@ -111,3 +116,43 @@ document.querySelectorAll('.js-delete-button').forEach((button)=>{
     updateCheckoutQuantity();
   })
 })
+
+document.querySelectorAll('.js-update-button').forEach((button)=>{
+  button.addEventListener('click', ()=>{
+    const productId = button.dataset.productId;
+    const quantity = document.querySelector(`.js-update-input-${productId}`).value;
+    console.log(quantity)
+    if (Number.isInteger(quantity) || quantity > 0){
+      cart.forEach((cartItem)=>{
+        if (cartItem.id === productId){
+          cartItem.quantity = quantity;
+          setCartLocalStorage();
+          updateCheckoutQuantity();
+          document.querySelector(`.js-quantity-${productId}`).innerHTML = quantity;
+        }
+      })
+    }
+  })
+})
+
+document.querySelectorAll('.update-quantity-input').forEach((button)=>{
+  button.addEventListener('keydown', (event)=>{
+    console.log(event.key)
+    if (event.key === 'Enter'){
+      const productId = button.dataset.productId;
+      const quantity = document.querySelector(`.js-update-input-${productId}`).value;
+      console.log(quantity)
+      if (Number.isInteger(quantity) || quantity > 0){
+        cart.forEach((cartItem)=>{
+          if (cartItem.id === productId){
+            cartItem.quantity = quantity;
+            setCartLocalStorage();
+            updateCheckoutQuantity();
+            document.querySelector(`.js-quantity-${productId}`).innerHTML = quantity;
+          }
+        })
+      }
+    }
+  })
+})
+
