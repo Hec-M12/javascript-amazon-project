@@ -15,11 +15,11 @@ export function addToCart(productId, selectQuantity, matchingProduct){
     }
   });
   if (matchingProduct){
-    matchingProduct.quantity+=Number(selectQuantity);
+    matchingProduct.quantity+= (selectQuantity);
   }else{
   cart.push({
     id: productId,
-    quantity: Number(selectQuantity)
+    quantity: selectQuantity
   })
 }
 }
@@ -43,7 +43,7 @@ export function setCartLocalStorage(){
 export function calculateCartQuantity(){
   let cartQuantity = 0;
   cart.forEach((cartItem)=>{
-    cartQuantity += cartItem.quantity;
+    (cartQuantity) += Number(cartItem.quantity);
   });
   return cartQuantity;
 }
