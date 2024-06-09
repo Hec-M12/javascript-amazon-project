@@ -1,8 +1,8 @@
 import { cart, removeFromCart, setCartLocalStorage, getCartLocalStorage, calculateCartQuantity} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
-
-
+import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
+import { deliveryOptions } from "../data/deliveryOptions.js";
 
 getCartLocalStorage();
 updateCheckoutQuantity();
@@ -24,11 +24,22 @@ cart.forEach((cartItem) => {
     }
   })
 
+  const deliveryOptionId = cartItem.deliveryOptionId;
+  let deliveryOption;
+  deliveryOptions.forEach((option)=>{
+    if (deliveryOptionId === option.id){
+      deliveryOption = option;
+    }
+  })
+  const today = dayjs();
+  const deliveryDate = today.add(deliveryOption.deliveryDays, 'day').format('dddd, MMMM D');
+
+
   checkoutItemsHTML += `
   <div class="cart-item-container 
     js-cart-item-container-${matchingProduct.id}">
   <div class="delivery-date">
-    Delivery date: Tuesday, June 21
+    Delivery date: ${deliveryDate}
   </div>
 
   <div class="cart-item-details-grid">
@@ -60,49 +71,59 @@ cart.forEach((cartItem) => {
       <div class="delivery-options-title">
         Choose a delivery option:
       </div>
-      <div class="delivery-option">
-        <input type="radio"
-          class="delivery-option-input"
-          name="delivery-option-${matchingProduct.id}">
-        <div>
-          <div class="delivery-option-date">
-            Tuesday, June 21
-          </div>
-          <div class="delivery-option-price">
-            FREE Shipping
-          </div>
-        </div>
-      </div>
-      <div class="delivery-option">
-        <input type="radio"
-          class="delivery-option-input"
-          name="delivery-option-${matchingProduct.id}">
-        <div>
-          <div class="delivery-option-date">
-            Wednesday, June 15
-          </div>
-          <div class="delivery-option-price">
-            $4.99 - Shipping
-          </div>
-        </div>
-      </div>
-      <div class="delivery-option">
-        <input type="radio"
-          class="delivery-option-input"
-          name="delivery-option-${matchingProduct.id}">
-        <div>
-          <div class="delivery-option-date">
-            Monday, June 13
-          </div>
-          <div class="delivery-option-price">
-            $9.99 - Shipping
-          </div>
-        </div>
+      ${deliveryOptionsHTML(matchingProduct)}
       </div>
     </div>
   </div>
 </div>
 `;})
+
+
+
+function deliveryOptionsHTML(matchingProduct){
+  let deliveryOptionsHTML = '';
+  deliveryOptions.forEach((option)=>{
+    const today = dayjs();
+    const deliveryDate = today.add(option.deliveryDays, 'day').format('dddd, MMMM D');
+    const priceString = (option.priceCents === 0) ? 'FREE': `$${formatCurrency(option.priceCents)} - `
+    
+    if (priceString === 'FREE')
+        {deliveryOptionsHTML += `<div class="delivery-option">
+        <input type="radio"
+          checked
+          data-id=${option.id}
+          class="delivery-option-input"
+          name="delivery-option">
+        <div>
+          <div class="delivery-option-date">
+            ${deliveryDate}
+          </div>
+          <div class="delivery-option-price">
+            ${priceString} Shipping
+          </div>
+        </div>
+      </div>`}
+    else {
+        {deliveryOptionsHTML += `<div class="delivery-option">
+        <input type="radio"
+          data-id=${option.id}
+          class="delivery-option-input"
+          name="delivery-option">
+        <div>
+          <div class="delivery-option-date">
+            ${deliveryDate}
+          </div>
+          <div class="delivery-option-price">
+            ${priceString} Shipping
+          </div>
+        </div>
+      </div>`}
+      }
+      }
+    )
+  
+  return deliveryOptionsHTML;
+}
 
 document.querySelector('.js-order-summary').innerHTML = checkoutItemsHTML;
 
@@ -156,3 +177,8 @@ document.querySelectorAll('.update-quantity-input').forEach((button)=>{
   })
 })
 
+document.querySelectorAll('.delivery-option-input').forEach((button)=>{
+  addEventListener('click', ()=>{
+    console.log(button.dataset.id);
+  })
+})
