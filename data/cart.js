@@ -60,3 +60,15 @@ export function calculateCartQuantity(){
   });
   return cartQuantity;
 }
+
+export function updateDeliveryOption(id, deliveryOptionId){
+  let matchingProduct;
+  cart.forEach((cartItem)=>{
+    if (cartItem.id === id){
+      matchingProduct = cartItem;
+    }
+  });
+
+  matchingProduct.deliveryOptionId = deliveryOptionId;
+  setCartLocalStorage();
+}
