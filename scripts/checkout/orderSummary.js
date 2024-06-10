@@ -3,6 +3,7 @@ import { products } from "../../data/products.js";
 import { formatCurrency } from "../utils/money.js";
 import dayjs from "https://unpkg.com/dayjs@1.11.10/esm/index.js";
 import { deliveryOptions } from "../../data/deliveryOptions.js";
+import { renderPaymentsummary } from "./paymentSummary.js";
 
 
 export function renderOrderSummary(){
@@ -119,6 +120,7 @@ export function renderOrderSummary(){
       containerToRemove.remove();
       setCartLocalStorage();
       updateCheckoutQuantity();
+      renderPaymentsummary();
     })
   })
 
@@ -137,7 +139,7 @@ export function renderOrderSummary(){
           }
         })
       }
-    })
+    renderPaymentsummary();})
   })
 
   document.querySelectorAll('.update-quantity-input').forEach((button)=>{
@@ -157,7 +159,7 @@ export function renderOrderSummary(){
             }
           })
         }
-      }
+        renderPaymentsummary();}
     })
   })
 
@@ -167,6 +169,7 @@ export function renderOrderSummary(){
       const deliveryOptionId = option.dataset.deliveryOptionId;
       updateDeliveryOption(id, deliveryOptionId);
       renderOrderSummary();
+      renderPaymentsummary();
     })
   })
 }
