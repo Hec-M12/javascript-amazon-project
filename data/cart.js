@@ -21,13 +21,14 @@ export function getCartLocalStorage(){
 }
 
 export function addToCart(productId, selectQuantity, matchingProduct){
+  selectQuantity = Number(selectQuantity);
   cart.forEach((cartItem)=>{
     if (productId === cartItem.id){
       matchingProduct = cartItem;
     }
   });
   if (matchingProduct){
-    matchingProduct.quantity+= (selectQuantity);
+    matchingProduct.quantity+= selectQuantity;
   }else{
   cart.push({
     id: productId,
