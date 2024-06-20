@@ -2,7 +2,7 @@ import { cart, calculateCartQuantity  } from "../../data/cart.js";
 import { products } from "../../data/products.js";
 import { deliveryOptions } from "../../data/deliveryOptions.js";
 import formatCurrency from "../utils/money.js";
-
+import {addOrder} from '../../data/orders.js'
 
 export function renderPaymentsummary(){
   let totalProductCents = 0;
@@ -60,10 +60,46 @@ export function renderPaymentsummary(){
       <div class="payment-summary-money">$${formatCurrency(totalCents)}</div>
     </div>
 
-    <button class="place-order-button button-primary">
+    <button class="place-order-button button-primary js-place-order">
       Place your order
     </button>
   `
 
   document.querySelector('.js-payment-summary').innerHTML = paymentSummaryHTML;
+
+  document.querySelector('.js-place-order').addEventListener('click', async () => {
+    try {
+      // Assuming cart is an array of items
+      const updatedCart = cart.map(item => ({
+        ...item,
+        productId: item.id,
+        // Remove the original id property
+        id: undefined
+      }));
+  
+      const response = await fetch('https://supersimplebackend.dev/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          cart: updatedCart
+        })
+      });
+  
+      if (!response.ok) {
+        console.error(`HTTP error! Status: ${response.status}, ${response.statusText}`);
+        throw new Error(`HTTP error! Status: ${response.status}`);
+      }
+  
+      const order = await response.json();
+      console.log(order);
+      addOrder(order);
+    } catch (error) {
+      console.error('There was a problem with the fetch operation:', error);
+    }
+
+  window.location.href = 'orders.html';
+  });
+  
 }
